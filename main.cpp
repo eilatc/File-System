@@ -154,7 +154,6 @@ void ls(){
 }
 
 void printMenu(){
-
     printf("\tMain Menu:\n");
     printf("1. Change Sub Directory\n");
     printf("2. Current Directory\n");
