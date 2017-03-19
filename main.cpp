@@ -237,7 +237,6 @@ void ls(){
 }
 
 
-
 void printMenu(){
     printf("\tMain Menu:\n");
     printf("1. Change Sub Directory (cd command)\n");
