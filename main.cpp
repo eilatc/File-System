@@ -4,6 +4,14 @@
 #include <ctype.h>
 #include <string.h>
 
+//Forward Deceleration
+void pwd();
+void cd(char *inp);
+void previousDirectory();
+void mkfile(char *inp);
+void mkdir(char *inp);
+void ls();
+
 struct Node{
     char *nameOfTheFile;
     Node *firstChild;
@@ -19,13 +27,123 @@ struct Root{
 Node* Root::root = nullptr;
 Node* Root::currentLocation = nullptr;
 
+bool validFolderName(char *inp){
+
+
+    //Empty String
+    if(strlen(inp) == 0){
+        printf("Invalid name of folder.\n");
+        return false;
+    }
+
+    //struct of file name
+    if(strchr(inp,'.') != nullptr){
+        printf("This is a file. try not to use '.' \n");
+        return false;
+    }
+
+    //Duplicate root
+    if(strcmp(inp,"/") == 0){
+        printf("Try not to use /. there is only one root folder.\n");
+        return false;
+    }
+
+    return true;
+
+
+
+
+}
+
+void prepend(char* s, const char* t, bool lastWordBeforeRoot)
+{
+
+
+    size_t len = strlen(t);
+    size_t i;
+
+    memmove(s + len, s, strlen(s) + 1);
+
+
+    for (i = 0 ; i < len ; ++i)
+    {
+        s[i] = t[i];
+    }
+
+    if(!lastWordBeforeRoot && strcmp(t,"/") != 0){
+
+        memmove(s + 1, s, strlen(s) + 1);
+        s[0] = '/';
+
+    }
+
+
+
+}
+
 
 
 void cd(char *inp){
-    printf("%s \n",inp);
+
+    if(!validFolderName(inp)) {
+        printf("cd: Invalid folder name. \n");
+        return;}
+
+    Node *currentFolder = Root::currentLocation->firstChild;
+
+    while(currentFolder != nullptr){
+
+        if(strcmp(currentFolder->nameOfTheFile,inp)==0){
+            Root::currentLocation = currentFolder;
+            printf("Entering %s \n",inp);
+            break;
+        }
+
+        currentFolder = currentFolder->nextSibling;
+
+    }
+
+
 }
 
-void pwd(){}
+void previousDirectory(){
+
+    if(Root::currentLocation->parent == nullptr){
+        printf("You already at the root folder.\n");
+        return;
+    } else{
+        Root::currentLocation = Root::currentLocation->parent;
+        printf("You are now at: ");
+        pwd();
+    }
+
+}
+
+void pwd(){
+
+    char currentPath[100] = {0};
+
+    Node *currentFolder = Root::currentLocation;
+
+    while(currentFolder != nullptr){
+
+        if(currentFolder->parent != nullptr && strcmp(currentFolder->parent->nameOfTheFile,"/") == 0){
+
+            prepend(currentPath,currentFolder->nameOfTheFile,true);  }
+
+        else {
+
+            prepend(currentPath, currentFolder->nameOfTheFile, false);
+        }
+
+        currentFolder = currentFolder->parent;
+
+    }
+
+    printf("%s \n",currentPath);
+
+
+}
 
 void mkfile(char *inp){}
 
@@ -36,23 +154,7 @@ void mkdir(char *inp){
     nameOfTheFolder = (char *) malloc(sizeof(char) * strlen(inp));
     strcpy(nameOfTheFolder,inp);
 
-    //Empty String
-    if(strlen(inp) == 0){
-        printf("Invalid name of folder.\n");
-        return;
-    }
-
-    //struct of file name
-    if(strchr(inp,'.') != nullptr){
-        printf("This is a file. try not to use '.' \n");
-        return;
-    }
-
-    //Duplicate root
-    if(strcmp(inp,"/") == 0){
-        printf("Try not to use /. there is only one root folder.\n");
-        return;
-    }
+    if(!validFolderName(inp)) return;
 
     Node **currentFolder = &Root::currentLocation;
 
@@ -143,6 +245,9 @@ void ls(){
 
     Node *currentFolder = Root::currentLocation->firstChild;
 
+    printf(". \n");
+    printf(".. \n");
+
     while(currentFolder){
 
         printf("%s \n",currentFolder->nameOfTheFile);
@@ -153,14 +258,17 @@ void ls(){
 
 }
 
+
+
 void printMenu(){
     printf("\tMain Menu:\n");
-    printf("1. Change Sub Directory\n");
-    printf("2. Current Directory\n");
-    printf("3. Create New Directory\n");
-    printf("4. Create New File\n");
-    printf("5. Print directory and file list\n");
-    printf("6. Quit\n");
+    printf("1. Change Sub Directory (cd command)\n");
+    printf("2. Change To Previous Directory (cd.. command)\n");
+    printf("3. Current Directory\n");
+    printf("4. Create New Directory\n");
+    printf("5. Create New File\n");
+    printf("6. Print directory and file list\n");
+    printf("7. Quit\n");
 
 
 }
@@ -195,6 +303,7 @@ int main()
         fflush(stdout);
 
         switch (choice) {
+
             case '1':
                 printf("Enter Sub Dir: ");
                 scanf("%s",inp);
@@ -203,31 +312,36 @@ int main()
                 break;
 
             case '2':
+                previousDirectory();
+                printf("\n");
+                break;
+
+            case '3':
                 printf("Current Directory: ");
                 pwd();
                 printf("\n");
                 break;
 
-            case '3':
+            case '4':
                 printf("Enter New Directory Name: ");
                 scanf("%s",inp);
                 mkdir(inp);
                 printf("\n");
                 break;
 
-            case '4':
+            case '5':
                 printf("Enter New File Name: ");
                 scanf("%s",inp);
                 mkfile(inp);
                 printf("\n");
                 break;
 
-            case '5':
+            case '6':
                 ls();
                 printf("\n");
                 break;
 
-            case '6':
+            case '7':
                 notTerminated = false;
                 break;
             default:
