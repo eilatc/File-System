@@ -30,7 +30,6 @@ void printMenu(){
 
 }
 
-
 int main()
 {
     char inp[100] = {0};
