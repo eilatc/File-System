@@ -29,7 +29,6 @@ Node* Root::currentLocation = nullptr;
 
 bool validFolderName(char *inp){
 
-
     //Empty String
     if(strlen(inp) == 0){
         printf("Invalid name of folder.\n");
@@ -50,14 +49,10 @@ bool validFolderName(char *inp){
 
     return true;
 
-
-
-
 }
 
 void prepend(char* s, const char* t, bool lastWordBeforeRoot)
 {
-
 
     size_t len = strlen(t);
     size_t i;
@@ -76,8 +71,6 @@ void prepend(char* s, const char* t, bool lastWordBeforeRoot)
         s[0] = '/';
 
     }
-
-
 
 }
 
@@ -102,7 +95,6 @@ void cd(char *inp){
         currentFolder = currentFolder->nextSibling;
 
     }
-
 
 }
 
@@ -224,21 +216,8 @@ void mkdir(char *inp){
 
 
                 }
-
-
-
-
-
             }
-
-        
-
-
-
     }
-
-
-
 }
 
 void ls(){
@@ -254,7 +233,6 @@ void ls(){
         currentFolder = currentFolder->nextSibling;
 
     }
-
 
 }
 
